@@ -1,7 +1,10 @@
 import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Only available in canary version of Next.js
+  // experimental: {
+  //   cacheComponents: true,
+  // },
 };
 
 export default nextConfig;
