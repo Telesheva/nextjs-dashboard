@@ -29,7 +29,7 @@ export default function Form() {
         {/* Customer Name */}
         <div className="mb-4">
           <label htmlFor="customer" className="mb-2 block text-sm font-medium">
-            Enter customer's name
+            Name
           </label>
           <div className="relative">
             <input
@@ -51,7 +51,7 @@ export default function Form() {
         {/* Customer Email */}
         <div className="mb-4">
           <label htmlFor="customer" className="mb-2 block text-sm font-medium">
-            Enter customer's email
+            Email
           </label>
           <div className="relative">
             <input

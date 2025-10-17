@@ -45,7 +45,11 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                 Select a customer
               </option>
               {customers.map((customer) => (
-                <option key={customer.id} value={customer.id}>
+                <option
+                  key={customer.id}
+                  value={customer.id}
+                  selected={state?.values?.customerId === customer.id}
+                >
                   {customer.name}
                 </option>
               ))}
@@ -72,6 +76,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                 id="amount"
                 name="amount"
                 type="number"
+                defaultValue={state?.values?.amount || ''}
                 step="0.01"
                 placeholder="Enter USD amount"
                 className="peer block w-full rounded-md border border-gray-200 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500"
@@ -99,7 +104,7 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
                   id="pending"
                   name="status"
                   type="radio"
-                  value="pending"
+                  defaultValue={state?.values?.status || 'pending'}
                   className="h-4 w-4 cursor-pointer border-gray-300 bg-gray-100 text-gray-600 focus:ring-2"
                   aria-describedby="status-error"
                 />

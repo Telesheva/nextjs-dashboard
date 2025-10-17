@@ -16,6 +16,11 @@ export type State = {
     amount?: string[];
     status?: string[];
   };
+  values?: {
+    customerId?: string;
+    amount?: string;
+    status?: string;
+  };
   message?: string | null;
 };
 
@@ -54,18 +59,21 @@ const CreateInvoice = FormSchema.omit({ id: true, date: true });
 const UpdateInvoice = FormSchema.omit({ id: true, date: true });
 
 export async function createInvoice(prevState: State, formData: FormData) {
+  const rawFormData = {
+    customerId: formData.get('customerId') as string,
+    amount: formData.get('amount') as string,
+    status: formData.get('status') as string,
+  };
+
   // Validate form using Zod
   // safeParse() will return an object containing either a success or error field. This will help handle validation more gracefully without having put this logic inside the try/catch block.
-  const validatedFields = CreateInvoice.safeParse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
+  const validatedFields = CreateInvoice.safeParse(rawFormData);
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
+      values: rawFormData,
       message: 'Missing Fields. Failed to Create Invoice.',
     };
   }
@@ -85,6 +93,7 @@ export async function createInvoice(prevState: State, formData: FormData) {
     console.error(e);
 
     return {
+      values: rawFormData,
       message: 'Database Error: Failed to Create Invoice.',
     };
   }
@@ -99,15 +108,18 @@ export async function updateInvoice(
   prevState: State,
   formData: FormData,
 ) {
-  const validatedFields = UpdateInvoice.safeParse({
-    customerId: formData.get('customerId'),
-    amount: formData.get('amount'),
-    status: formData.get('status'),
-  });
+  const rawFormData = {
+    customerId: formData.get('customerId') as string,
+    amount: formData.get('amount') as string,
+    status: formData.get('status') as string,
+  };
+
+  const validatedFields = UpdateInvoice.safeParse(rawFormData);
 
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
+      values: rawFormData,
       message: 'Missing Fields. Failed to Update Invoice.',
     };
   }
@@ -125,6 +137,7 @@ export async function updateInvoice(
     console.error(e);
 
     return {
+      values: rawFormData,
       message: 'Database Error: Failed to Update Invoice.',
     };
   }
