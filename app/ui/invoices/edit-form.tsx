@@ -21,7 +21,10 @@ export default function EditInvoiceForm({
 }) {
   const initialState: State = { message: null, errors: {} };
   const updateInvoiceWithId = updateInvoice.bind(null, invoice.id);
-  const [state, formAction] = useActionState(updateInvoiceWithId, initialState);
+  const [state, formAction, isPending] = useActionState(
+    updateInvoiceWithId,
+    initialState,
+  );
 
   const renderError = (error: string) => (
     <p className="mt-2 text-sm text-red-500" key={error}>
@@ -150,7 +153,9 @@ export default function EditInvoiceForm({
         >
           Cancel
         </Link>
-        <Button type="submit">Edit Invoice</Button>
+        <Button type="submit" disabled={isPending}>
+          Edit Invoice
+        </Button>
       </div>
     </form>
   );

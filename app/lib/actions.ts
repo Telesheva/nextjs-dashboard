@@ -19,6 +19,18 @@ export type State = {
   message?: string | null;
 };
 
+export type CustomersState = {
+  errors?: {
+    name?: string[];
+    email?: string[];
+  };
+  values?: {
+    name?: string;
+    email?: string;
+  };
+  message?: string | null;
+};
+
 const FormSchema = z.object({
   id: z.string(),
   customerId: z.string({
@@ -31,6 +43,11 @@ const FormSchema = z.object({
     invalid_type_error: 'Please select an invoice status.',
   }),
   date: z.string(),
+});
+
+const AddCustomerSchema = z.object({
+  name: z.string().min(1, 'Please enter the name.'),
+  email: z.string().email(),
 });
 
 const CreateInvoice = FormSchema.omit({ id: true, date: true });
@@ -119,6 +136,51 @@ export async function updateInvoice(
 export async function deleteInvoice(id: string) {
   await sql`DELETE FROM invoices WHERE id = ${id}`;
   revalidatePath('/dashboard/invoices');
+}
+
+export async function addCustomer(
+  prevState: CustomersState,
+  formData: FormData,
+) {
+  const rawFormData = {
+    name: formData.get('name') as string,
+    email: formData.get('email') as string,
+  };
+
+  const validatedFields = AddCustomerSchema.safeParse(rawFormData);
+
+  if (!validatedFields.success) {
+    return {
+      errors: validatedFields.error.flatten().fieldErrors,
+      values: rawFormData,
+      message: 'Missing Fields. Failed to Add Customer.',
+    };
+  }
+
+  const { name, email } = validatedFields.data;
+  const imageUrl = '/customers/avatar-placeholder.webp';
+
+  try {
+    await sql`
+    INSERT INTO customers (name, email, image_url)
+    VALUES (${name}, ${email}, ${imageUrl})
+  `;
+  } catch (e) {
+    console.error(e);
+
+    return {
+      values: rawFormData,
+      message: 'Database Error: Failed to Add Customer.',
+    };
+  }
+
+  revalidatePath('/dashboard/customers');
+  redirect('/dashboard/customers');
+}
+
+export async function deleteCustomer(id: string) {
+  await sql`DELETE FROM customers WHERE id = ${id}`;
+  revalidatePath('/dashboard/customers');
 }
 
 export async function authenticate(

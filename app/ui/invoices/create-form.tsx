@@ -14,7 +14,10 @@ import { createInvoice, State } from '@/app/lib/actions';
 
 export default function Form({ customers }: { customers: CustomerField[] }) {
   const initialState: State = { message: null, errors: {} };
-  const [state, formAction] = useActionState(createInvoice, initialState);
+  const [state, formAction, isPending] = useActionState(
+    createInvoice,
+    initialState,
+  );
 
   const renderError = (error: string) => (
     <p className="mt-2 text-sm text-red-500" key={error}>
@@ -141,7 +144,9 @@ export default function Form({ customers }: { customers: CustomerField[] }) {
         >
           Cancel
         </Link>
-        <Button type="submit">Create Invoice</Button>
+        <Button type="submit" disabled={isPending}>
+          Create Invoice
+        </Button>
       </div>
     </form>
   );
